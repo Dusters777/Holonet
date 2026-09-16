@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Holonet Credit Command</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#ffe81f;--holo:#7fdcff;--line:rgba(127,220,255,.28);--up:#3dff8a;--down:#ff3d3d;--warn:#ffb020;--ink:#d9ecff;--panel:rgba(4,10,24,.84)}
+*{box-sizing:border-box}
+html{background:#000}
+body{margin:0;color:var(--ink);font:14px/1.5 'Share Tech Mono',Consolas,monospace;min-height:100vh;
+ background:radial-gradient(1px 1px at 12% 18%,#fff 50%,transparent),radial-gradient(1px 1px at 72% 8%,#bfe 50%,transparent),radial-gradient(1.5px 1.5px at 34% 62%,#fff 50%,transparent),radial-gradient(1px 1px at 88% 44%,#ffd 50%,transparent),radial-gradient(1px 1px at 55% 88%,#fff 50%,transparent),radial-gradient(1px 1px at 5% 80%,#9cf 50%,transparent),radial-gradient(ellipse at 50% -10%,rgba(40,80,160,.35),transparent 60%),#000;
+ background-size:300px 300px,420px 420px,520px 520px,360px 360px,460px 460px,380px 380px,100% 100%;background-attachment:fixed}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(127,220,255,.025) 0 1px,transparent 1px 3px)}
+a{color:var(--holo)}
+.hero{perspective:420px;height:200px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.hero h1{font:900 clamp(30px,6.5vw,78px)/.95 Orbitron,sans-serif;color:var(--gold);text-align:center;margin:0 0 16px;letter-spacing:.06em;transform:rotateX(28deg);transform-origin:50% 100%;text-shadow:0 0 18px rgba(255,232,31,.35);animation:rise 1.6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{transform:rotateX(62deg) translateY(120px);opacity:0}to{transform:rotateX(28deg);opacity:1}}
+@media (prefers-reduced-motion:reduce){.hero h1{animation:none}}
+.bar{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;align-items:center;color:var(--holo);font-size:13px;padding:0 12px}
+.wrap{max-width:1320px;margin:0 auto;padding:0 16px 40px}
+.panel{background:var(--panel);border:1px solid var(--line);padding:18px;margin:18px 0;clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+h2{font:700 15px Orbitron,sans-serif;color:var(--gold);margin:0 0 14px;letter-spacing:.04em}
+h3{font:700 13px Orbitron,sans-serif;color:var(--holo);margin:18px 0 8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.stat{border-left:2px solid var(--gold);padding:4px 14px}
+.stat .k{color:var(--holo);font-size:12px}.stat .v{font:700 22px Orbitron,sans-serif;color:#fff}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.card{border:1px solid var(--line);padding:12px 14px;background:linear-gradient(180deg,rgba(127,220,255,.07),transparent)}
+.sym{font:700 18px Orbitron,sans-serif;color:var(--gold)}.nm{font-size:12px;opacity:.7}
+.price{font:700 21px Orbitron,sans-serif;color:#fff;margin:6px 0 2px}.chg{font-size:15px}.sub{font-size:12px;opacity:.75;margin-top:4px}
+.up{color:var(--up);text-shadow:0 0 8px rgba(61,255,138,.55)}.down{color:var(--down);text-shadow:0 0 8px rgba(255,61,61,.55)}
+.na{color:#6d7d90}.st{color:var(--gold)}.warn{color:var(--warn)}.muted{opacity:.7}
+.tbl{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}
+th{font:500 11px Orbitron,sans-serif;color:var(--holo);text-align:left;border-bottom:1px solid var(--line);padding:8px 6px;white-space:nowrap}
+td{padding:8px 6px;border-bottom:1px solid rgba(127,220,255,.09);vertical-align:top;white-space:nowrap}
+td.wrapcell{white-space:normal;min-width:190px}tr:hover td{background:rgba(255,232,31,.04)}
+.tag{display:inline-block;border:1px solid var(--line);padding:0 6px;font-size:11px;color:var(--holo)}
+.tag.kr{border-color:#8f7bff;color:#b9adff}
+form.grid,.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;align-items:end}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--holo)}.wide{grid-column:1/-1}
+input,select,textarea{background:#020812;color:#fff;border:1px solid var(--line);padding:8px;font:13px 'Share Tech Mono',monospace;width:100%}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button,.btn{font:700 12px Orbitron,sans-serif;background:transparent;color:var(--gold);border:1px solid var(--gold);padding:10px 16px;cursor:pointer;text-decoration:none;display:inline-block}
+button:hover:not(:disabled),.btn:hover{background:var(--gold);color:#000}
+button:disabled{opacity:.45;cursor:wait}
+button.small{padding:6px 10px;font-size:11px}
+button.danger{color:var(--down);border-color:var(--down)}button.danger:hover:not(:disabled){background:var(--down);color:#000}
+.check{flex-direction:row;align-items:center;gap:8px}.check input{width:auto}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+details{border-top:1px solid var(--line);padding:12px 0}details:first-of-type{border-top:0}
+summary{cursor:pointer;font:700 14px Orbitron,sans-serif;color:var(--gold)}
+.hint{font-size:12px;opacity:.78;margin:6px 0 12px;max-width:85ch}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);max-width:min(680px,92vw);border:1px solid var(--gold);background:#030a18;color:var(--gold);padding:12px 16px;z-index:20;display:none}
+#toast.bad{border-color:var(--warn);color:var(--warn)}
+.flash{border:1px solid var(--warn);color:var(--warn);padding:10px 14px;margin:12px 0}
+#gate{max-width:560px;margin:30px auto}
+.preview{border:1px dashed var(--line);padding:12px;margin-top:12px}
+footer{text-align:center;font-size:12px;opacity:.55;padding:10px}
+</style>
+</head>
+<body>
+<div class="hero"><h1>Holonet<br>Credit Command</h1></div>
+<div class="bar" id="bar"></div>
+<div class="wrap">
+  <section class="panel" id="gate" hidden>
+    <h2>Connect to your n8n</h2>
+    <p class="hint">Your prices and ledger live on your own n8n server. This page only stores the address and access key in this browser.</p>
+    <form class="grid" id="gateForm">
+      <label class="wide">n8n webhook URL<input name="api" required placeholder="https://n8n.yourdomain.com/webhook/holonet-api"></label>
+      <label class="wide">Access key<input name="key" type="password" required autocomplete="current-password"></label>
+      <div><button type="submit">Connect</button></div>
+    </form>
+  </section>
+  <main id="app" hidden></main>
+  <footer>Not tax advice. Verify figures with a tax professional before filing.</footer>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// Optional: hard-code your n8n webhook URL here so you only type the key once per device.
+const DEFAULT_API_URL = '';
+
+const $ = s => document.querySelector(s);
+const store = { get api() { return localStorage.getItem('holonet.api') || DEFAULT_API_URL; }, get key() { return localStorage.getItem('holonet.key') || ''; } };
+let DATA = null, busy = false, previewCsv = null;
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const f2 = n => Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const usd = n => n == null ? '—' : (n < 0 ? '-$' : '$') + f2(n);
+const sUsd = n => n == null ? '—' : (n >= 0 ? '+' : '') + usd(n);
+const px = n => n == null ? '—' : Math.abs(n) >= 1 ? usd(n) : '$' + Number(n).toPrecision(4);
+const qty = n => { const s = Number(n || 0).toFixed(8); return s.replace(/\.?0+$/, '') || '0'; };
+const pct = n => (n >= 0 ? '+' : '') + Number(n).toFixed(2) + '%';
+const cls = n => n == null ? 'na' : n >= 0 ? 'up' : 'down';
+const chg = n => n == null ? '<span class="na">—</span>' : `<span class="${cls(n)}">${n >= 0 ? '▲' : '▼'} ${pct(n)}</span>`;
+const money = n => n == null ? '<span class="na">—</span>' : `<span class="${cls(n)}">${sUsd(n)}</span>`;
+const short = a => a ? esc(a.length > 14 ? a.slice(0, 6) + '…' + a.slice(-4) : a) : '';
+const opt = (v, t, sel) => `<option value="${esc(v)}"${sel ? ' selected' : ''}>${esc(t)}</option>`;
+const when = iso => iso ? new Date(iso).toLocaleString() : 'never';
+
+function toast(msg, bad) { const t = $('#toast'); t.textContent = msg; t.className = bad ? 'bad' : ''; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', bad ? 9000 : 5000); }
+
+async function api(action, extra = {}) {
+  const res = await fetch(store.api, { method: 'POST', body: new URLSearchParams({ payload: JSON.stringify({ key: store.key, action, ...extra }) }) });
+  const text = await res.text();
+  let json; try { json = JSON.parse(text); } catch (e) { throw new Error(`n8n returned ${res.status}: ${text.slice(0, 140) || 'empty response'}`); }
+  if (json.auth === false) { localStorage.removeItem('holonet.key'); showGate(json.msg); throw new Error(json.msg); }
+  return json;
+}
+
+async function act(action, extra, button) {
+  if (busy) return; busy = true;
+  document.querySelectorAll('button').forEach(b => b.disabled = true);
+  const label = button && button.textContent; if (button) button.textContent = 'Working…';
+  try {
+    const r = await api(action, extra);
+    if (r.msg) toast(r.msg, r.ok === false);
+    if (r.preview) return r;
+    if (r.ok !== false && r.content === undefined) await load(false);
+    return r;
+  } catch (e) { toast(networkHint(e), true); }
+  finally { busy = false; document.querySelectorAll('button').forEach(b => b.disabled = false); if (button) button.textContent = label; }
+}
+const networkHint = e => e instanceof TypeError ? 'Could not reach n8n. Check the webhook URL, that the workflow is published, and that n8n is served over HTTPS.' : e.message;
+
+async function load(force) {
+  try {
+    const r = await api('data', { force: !!force });
+    if (r.ok === false) return toast(r.msg, true);
+    DATA = r.data; render();
+  } catch (e) { toast(networkHint(e), true); }
+}
+
+function download(r) {
+  if (!r || r.ok === false || !r.content) return;
+  const url = URL.createObjectURL(new Blob([r.content], { type: r.mime || 'text/plain' }));
+  const a = Object.assign(document.createElement('a'), { href: url, download: r.filename }); document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function showGate(msg) {
+  $('#app').hidden = true; $('#gate').hidden = false; $('#bar').innerHTML = '';
+  const f = $('#gateForm'); f.api.value = store.api; if (msg) toast(msg, true);
+}
+$('#gateForm').addEventListener('submit', e => {
+  e.preventDefault(); const f = e.target;
+  localStorage.setItem('holonet.api', f.api.value.trim()); localStorage.setItem('holonet.key', f.key.value);
+  $('#gate').hidden = true; $('#app').hidden = false; $('#app').innerHTML = '<section class="panel"><h2>Scanning…</h2></section>'; load(true);
+});
+
+const DA = [['none', 'Not on a 1099-DA'], ['basis_reported', '1099-DA, basis reported to IRS'], ['basis_not_reported', '1099-DA, basis not reported']];
+function lotFields(prefix) {
+  const chains = (DATA.chains || []).map(([k, t]) => opt(k, t)).join('');
+  return `
+  <label>Coin (CoinGecko ID or ticker)<input name="coinId" placeholder="bitcoin or BTC"></label>
+  <label>Display name<input name="name" placeholder="Bitcoin"></label>
+  <label>Quantity<input name="qty" inputmode="decimal" placeholder="Blank = read from chain"></label>
+  <label>Date acquired<input name="acquiredDate" type="date"></label>
+  <label>Total cost basis (USD)<input name="costBasis" inputmode="decimal" placeholder="Blank = market value that day"></label>
+  <label>Purchase fee (USD)<input name="feeUsd" inputmode="decimal"></label>
+  <label>Account<input name="account" placeholder="kraken, ledger, coinbase…"></label>
+  <label>Blockchain<select name="chain">${chains}</select></label>
+  <label>Token contract (ERC-20 only)<input name="tokenContract" placeholder="Blank = native coin"></label>
+  <label>Exchange address (sent from)<input name="exchangeAddress"></label>
+  <label>Wallet address (held in)<input name="walletAddress"></label>
+  <label>Sale address (sent to when sold)<input name="saleAddress"></label>
+  <label>Tax form status<select name="form1099da">${DA.map(([k, t]) => opt(k, t)).join('')}</select></label>
+  <label class="wide">Notes<input name="notes"></label>`;
+}
+const formData = f => Object.fromEntries(new FormData(f).entries());
+const lotLabel = l => `#${l.id} ${l.sym} — ${qty(l.remaining)} of ${qty(l.qty)} left, ${l.acquired || 'no date'}${l.source === 'kraken' ? ' · Kraken' : ''}`;
+
+function render() {
+  const d = DATA, s = d.summary, k = d.kraken;
+  $('#bar').innerHTML = `<span>Prices scanned ${esc(when(d.lastScan))}</span>
+    <button class="small" data-do="rescan">Rescan prices</button>
+    ${k.apiReady ? `<button class="small" data-do="ksync">Sync Kraken</button>` : ''}
+    <button class="small" data-do="lock">Lock</button>`;
+
+  const lotRows = d.active.map(l => `<tr>
+    <td>#${l.id}</td><td><b>${esc(l.sym)}</b>${l.source === 'kraken' ? ' <span class="tag kr">Kraken</span>' : l.account ? ` <span class="tag">${esc(l.account)}</span>` : ''}</td>
+    <td>${qty(l.remaining)}</td><td>${l.price == null ? '<span class="na">—</span>' : px(l.price)}</td><td>${chg(l.ch24)}</td><td>${usd(l.value)}</td>
+    <td>${l.basis == null ? '<span class="warn">Enter basis</span>' : usd(l.basis)}<br><small class="muted">${esc(l.basisSource)}</small></td>
+    <td>${money(l.upl)}</td><td>${esc(l.acquired || '—')}</td>
+    <td>${!l.acquired ? '<span class="warn">Needs date</span>' : l.isLong ? '<span class="up">Long</span>' : `<span class="st">Short</span><br><small class="muted">long after ${esc(l.longAfter)}</small>`}</td>
+    <td class="wrapcell">${l.chain !== 'none' ? `<small>${esc(l.chain)}</small><br>${short(l.exchangeAddress) || '<span class="na">any</span>'} ⟶ ${short(l.walletAddress) || '?'}${l.saleAddress ? ' ⟶ ' + short(l.saleAddress) : ''}` : '<small class="na">—</small>'}${l.warning ? `<div class="warn">⚠ ${esc(l.warning)}</div>` : ''}</td></tr>`).join('');
+
+  const saleRows = d.sales.map(x => `<tr><td>${esc(x.id.length > 14 ? x.id.slice(0, 14) + '…' : x.id)}</td><td>#${x.lotId} ${esc(x.sym)}</td><td>${esc(x.date)}</td><td>${qty(x.qty)}</td>
+    <td>${x.proceeds == null ? '<span class="warn">Enter proceeds</span>' : usd(x.proceeds)}<br><small class="muted">${esc(x.proceedsSource)}</small></td>
+    <td>${x.cost == null ? '<span class="warn">Needs basis</span>' : usd(x.cost)}</td><td>${money(x.gain)}</td>
+    <td>${x.long ? '<span class="up">Long</span>' : '<span class="st">Short</span>'}</td><td><small>${esc(x.source)}${x.txHash ? '<br>' + short(x.txHash) : ''}</small></td></tr>`).join('');
+
+  const yr = new Date().getFullYear();
+  const allOpts = d.lots.map(l => opt(l.id, lotLabel(l))).join(''), activeOpts = d.active.map(l => opt(l.id, lotLabel(l))).join('');
+  const saleOpts = d.sales.map(x => opt(x.id, `${x.date} · #${x.lotId} ${x.sym} · ${qty(x.qty)} · ${x.source}`)).join('');
+
+  $('#app').innerHTML = `
+  ${d.priceError ? `<div class="flash">${esc(d.priceError)}</div>` : ''}
+  <section class="panel"><h2>Fleet status</h2><div class="stats">
+    <div class="stat"><div class="k">Portfolio value</div><div class="v">${usd(s.value)}</div></div>
+    <div class="stat"><div class="k">Cost basis held</div><div class="v">${usd(s.basis)}</div></div>
+    <div class="stat"><div class="k">Unrealized P/L${s.unrealPct != null ? ' (' + pct(s.unrealPct) + ')' : ''}</div><div class="v">${money(s.unreal)}</div></div>
+    <div class="stat"><div class="k">Realized ${s.year}</div><div class="v">${money(s.realizedYTD)}</div></div>
+    <div class="stat"><div class="k">Active lots (manual limit)</div><div class="v">${s.activeCount} <small class="muted">(${s.manualActive}/${s.maxActive})</small></div></div>
+  </div></section>
+
+  <section class="panel"><h2>Live prices</h2><div class="cards">${d.coins.map(c => `<div class="card">
+    <div class="sym">${esc(c.sym)}</div><div class="nm">${esc(c.name || c.coinId)}</div>
+    <div class="price">${c.price == null ? '<span class="warn">No signal</span>' : px(c.price)}</div>
+    <div class="chg">${chg(c.ch24)} <small>24h</small></div><div class="sub">${qty(c.qty)} held · ${usd(c.value)}</div></div>`).join('') || '<p>No active holdings. Add a lot or import from Kraken below.</p>'}</div></section>
+
+  <section class="panel"><h2>Active lots</h2>
+    ${s.missingBasis ? `<p class="hint warn">${s.missingBasis} lot(s) have no cost basis. Edit the lot, or run a scan to use that day's market value.</p>` : ''}
+    <div class="tbl"><table><thead><tr><th>Lot</th><th>Asset</th><th>Qty</th><th>Price</th><th>24h</th><th>Value</th><th>Basis</th><th>Unrealized</th><th>Acquired</th><th>Term</th><th>Addresses</th></tr></thead>
+    <tbody>${lotRows || '<tr><td colspan="11">Nothing active yet.</td></tr>'}</tbody></table></div></section>
+
+  <section class="panel"><h2>Tax export (Form 8949 CSV)</h2>
+    <form class="row" id="exportForm">
+      <label>From<input type="date" name="from" required value="${yr - 1}-01-01"></label>
+      <label>To<input type="date" name="to" required value="${yr - 1}-12-31"></label>
+      <button type="submit">Download CSV</button>
+      <button type="button" data-year="${yr - 1}">${yr - 1} tax year</button>
+      <button type="button" data-year="${yr}">${yr} to date</button>
+    </form>
+    <p class="hint">Every sale dated inside the range, with short/long-term split, the Form 8949 box, and the account it came from. Import it into your tax software or hand it to your preparer.</p></section>
+
+  <section class="panel"><h2>Realized sales</h2><div class="tbl"><table><thead><tr><th>Sale</th><th>Lot</th><th>Date sold</th><th>Qty</th><th>Proceeds</th><th>Cost</th><th>Gain/loss</th><th>Term</th><th>Source</th></tr></thead>
+    <tbody>${saleRows || '<tr><td colspan="9">No sales recorded.</td></tr>'}</tbody></table></div></section>
+
+  <section class="panel"><h2>Kraken</h2>
+    <p class="hint">${k.trades} trade(s) saved${k.excluded ? `, ${k.excluded} excluded` : ''}. Last sync: ${esc(when(k.lastSync))}${k.lastSyncMsg ? ` — ${esc(k.lastSyncMsg)}` : ''}.
+    ${k.apiReady ? (k.autoSyncHours ? `Auto-sync runs every ${k.autoSyncHours} hours.` : 'Auto-sync is off.') : 'API sync is off until you add a read-only Kraken key in n8n. CSV import works without it.'}
+    Kraken sells are matched first-in-first-out against Kraken buys only.</p>
+    <div class="row">${k.apiReady ? '<button data-do="ksync">Sync Kraken now</button>' : ''}${k.excluded ? '<button data-do="kinclude">Restore excluded trades</button>' : ''}</div>
+    ${k.unmatched.length ? `<h3>Sells with no matching Kraken buy</h3><p class="hint warn">These coins were likely bought elsewhere or before your imported history. Import an older Kraken ledgers CSV, or add a manual lot with account set to <b>kraken</b>.</p>
+      <div class="tbl"><table><thead><tr><th>Date</th><th>Coin</th><th>Unmatched qty</th><th>Kraken ID</th></tr></thead><tbody>${k.unmatched.map(u => `<tr><td>${esc(u.date)}</td><td>${esc(u.sym)}</td><td>${qty(u.qty)}</td><td>${esc(u.id)}</td></tr>`).join('')}</tbody></table></div>` : ''}
+    <h3>Import a Kraken CSV</h3>
+    <p class="hint">On Kraken: profile icon → Documents → Create export → <b>Ledgers</b>, all dates, CSV. Unzip it and choose the ledgers.csv file. Trades exports also work, but they miss instant "Buy Crypto" purchases. Already-saved trades are skipped.</p>
+    <div class="row"><label>Kraken export file<input type="file" id="csvFile" accept=".csv,.tsv,text/csv"></label><button data-do="kpreview">Preview</button></div>
+    <div id="previewBox"></div>
+    <details><summary>Clear Kraken data</summary>
+      <form class="row" id="kclearForm"><label class="check"><input type="checkbox" name="confirm" value="yes" required>Remove all Kraken trades and Kraken lots</label><button class="danger" type="submit">Clear Kraken data</button></form>
+    </details>
+  </section>
+
+  <section class="panel"><h2>Ledger controls</h2>
+    <details open><summary>Log a new lot</summary>
+      <p class="hint">Enter a cost basis if you have it. With a blockchain and wallet address, the scan finds the transfer from the exchange address and fills in date and quantity. Anything still blank uses CoinGecko's market price that day (free tier covers about the last 365 days).</p>
+      <form class="grid" id="addLot">${lotFields()}<div><button type="submit">Log lot</button></div></form></details>
+
+    <details><summary>Record a sale</summary>
+      <p class="hint">Leave proceeds blank to use the market price on the sale date.</p>
+      <form class="grid" id="addSale">
+        <label class="wide">Lot<select name="lotId" required>${activeOpts}</select></label>
+        <label>Date sold<input type="date" name="saleDate" required></label><label>Quantity sold<input name="saleQty" inputmode="decimal" required></label>
+        <label>Gross proceeds (USD)<input name="proceeds" inputmode="decimal"></label><label>Sale fee (USD)<input name="saleFee" inputmode="decimal"></label>
+        <label>Tax form status<select name="saleForm1099da">${opt('', 'Same as lot')}${DA.map(([a, b]) => opt(a, b)).join('')}</select></label>
+        <div><button type="submit">Record sale</button></div></form></details>
+
+    <details><summary>Edit a lot</summary>
+      <p class="hint">Changes to Kraken lots are kept when Kraken syncs again. Changing an address clears scanned data and rescans.</p>
+      <form class="grid" id="editLot"><label class="wide">Lot<select name="lotId" required>${allOpts}</select></label>${lotFields()}<div><button type="submit">Save changes</button></div></form></details>
+
+    <details><summary>Edit a sale</summary>
+      <p class="hint">Use this to fill in missing proceeds, such as coin-for-coin trades. Clear the proceeds to use the market price again.</p>
+      <form class="grid" id="editSale"><label class="wide">Sale<select name="saleId" required>${saleOpts}</select></label>
+        <label>Gross proceeds (USD)<input name="proceeds" inputmode="decimal"></label><label>Sale fee (USD)<input name="saleFee" inputmode="decimal"></label>
+        <div><button type="submit">Save sale</button></div></form></details>
+
+    <details><summary>Scan wallets and fill market prices</summary>
+      <form class="row" id="scanForm"><label>Lot<select name="lotId">${opt('all', 'All lots')}${allOpts}</select></label><button type="submit">Run scan</button></form>
+      <p class="hint">Bitcoin and Litecoin use free public explorers, XRP uses XRPScan, Polkadot needs a free Subscan key, and Ethereum-style chains need a free Etherscan key. Transfer dates are when coins moved, which can be later than your purchase.</p></details>
+
+    <details><summary>Delete</summary><div class="grid">
+      <form class="grid wide" id="delLot"><label class="wide">Lot<select name="lotId">${allOpts}</select></label><label class="check wide"><input type="checkbox" name="confirm" value="yes" required>Delete this lot (Kraken lots are excluded from future syncs)</label><div><button class="danger" type="submit">Delete lot</button></div></form>
+      <form class="grid wide" id="delSale"><label class="wide">Sale<select name="saleId">${saleOpts}</select></label><label class="check wide"><input type="checkbox" name="confirm" value="yes" required>Delete this sale</label><div><button class="danger" type="submit">Delete sale</button></div></form>
+    </div></details>
+
+    <details><summary>Backup and restore</summary>
+      <div class="row"><button data-do="backup">Download backup</button></div>
+      <form class="grid" id="restoreForm" style="margin-top:12px"><label class="wide">Backup file<input type="file" name="file" accept=".json,application/json" required></label>
+        <label class="check wide"><input type="checkbox" name="confirm" value="yes" required>Replace the whole ledger with this backup</label><div><button class="danger" type="submit">Restore backup</button></div></form>
+    </details>
+  </section>`;
+  wire();
+}
+
+function wire() {
+  const d = DATA;
+  document.querySelectorAll('[data-do]').forEach(b => b.onclick = async () => {
+    const w = b.dataset.do;
+    if (w === 'rescan') load(true);
+    if (w === 'lock') { localStorage.removeItem('holonet.key'); showGate(); }
+    if (w === 'ksync') act('kraken_sync', {}, b);
+    if (w === 'kinclude') act('kraken_include_all', {}, b);
+    if (w === 'backup') download(await act('backup', {}, b));
+    if (w === 'kpreview') {
+      const file = $('#csvFile').files[0]; if (!file) return toast('Choose a Kraken CSV file first', true);
+      previewCsv = await file.text();
+      const r = await act('kraken_csv', { mode: 'preview', csv: previewCsv }, b);
+      if (!r || !r.preview) return;
+      const p = r.preview, skipped = Object.entries(p.skipped || {}).map(([k, v]) => `${v} ${k}`).join(', ');
+      $('#previewBox').innerHTML = `<div class="preview">
+        <p><b>${esc(p.kind)}</b> export, ${esc(p.from)} to ${esc(p.to)}: ${p.buys} buys, ${p.sells} sells, ${p.swaps} coin-for-coin trades.
+        <b>${p.newCount} new</b>, ${p.dup} already saved. Coins: ${esc(p.coins.join(', '))}.</p>
+        ${skipped ? `<p class="hint">Not imported (not buys or sells): ${esc(skipped)}.</p>` : ''}
+        <button data-imp ${p.newCount ? '' : 'disabled'}>Import ${p.newCount} trade(s)</button></div>`;
+      $('[data-imp]').onclick = e => act('kraken_csv', { mode: 'import', csv: previewCsv }, e.target).then(() => { previewCsv = null; });
+    }
+  });
+
+  const onSubmit = (id, fn) => { const f = $(id); if (f) f.addEventListener('submit', e => { e.preventDefault(); fn(f, e.submitter); }); };
+  const yearBtns = document.querySelectorAll('[data-year]');
+  yearBtns.forEach(b => b.onclick = async () => download(await act('export', { year: b.dataset.year }, b)));
+  onSubmit('#exportForm', async (f, b) => download(await act('export', formData(f), b)));
+  onSubmit('#addLot', (f, b) => act('add_lot', formData(f), b));
+  onSubmit('#addSale', (f, b) => act('add_sale', formData(f), b));
+  onSubmit('#scanForm', (f, b) => act('sync', formData(f), b));
+  onSubmit('#delLot', (f, b) => act('delete_lot', formData(f), b));
+  onSubmit('#delSale', (f, b) => act('delete_sale', formData(f), b));
+  onSubmit('#kclearForm', (f, b) => act('kraken_clear', formData(f), b));
+  onSubmit('#restoreForm', async (f, b) => act('restore', { confirm: 'yes', backup: await f.file.files[0].text() }, b));
+
+  // Edit lot: prefill from the selected lot, send only what changed ('-' clears a field)
+  const el = $('#editLot');
+  if (el) {
+    const fill = () => { const lot = d.lots.find(l => String(l.id) === el.lotId.value); if (!lot) return; for (const [k, v] of Object.entries(lot.edit)) if (el[k]) el[k].value = v ?? ''; el._orig = { ...lot.edit }; };
+    el.lotId.onchange = fill; fill();
+    onSubmit('#editLot', (f, b) => {
+      const body = { lotId: f.lotId.value };
+      for (const [k, orig] of Object.entries(f._orig || {})) { const v = f[k].value.trim(); if (v !== String(orig ?? '')) body[k] = v === '' ? '-' : v; }
+      act('edit_lot', body, b);
+    });
+  }
+  const es = $('#editSale');
+  if (es) {
+    const fill = () => { const s = d.sales.find(x => x.id === es.saleId.value); if (!s) return; es.proceeds.value = s.rawProceeds ?? ''; es.saleFee.value = s.feeUsd ?? ''; es._orig = { proceeds: String(s.rawProceeds ?? ''), saleFee: String(s.feeUsd ?? '') }; };
+    es.saleId.onchange = fill; fill();
+    onSubmit('#editSale', (f, b) => {
+      const body = { saleId: f.saleId.value };
+      for (const k of ['proceeds', 'saleFee']) { const v = f[k].value.trim(); if (v !== f._orig[k]) body[k] = v === '' ? '-' : v; }
+      act('edit_sale', body, b);
+    });
+  }
+}
+
+if (!store.api || !store.key) showGate();
+else { $('#app').hidden = false; $('#app').innerHTML = '<section class="panel"><h2>Scanning…</h2></section>'; load(false); }
+setInterval(() => { if (document.visibilityState === 'visible' && DATA && !busy) load(false); }, 5 * 60 * 1000);
+</script>
+</body>
+</html>
